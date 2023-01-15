@@ -1,0 +1,10 @@
+# configurations of app, like address, ...
+app:
+  address: localhost:8080
+# configurations of database, like mysql, redis, ...
+database:
+  mysql:
+    username: your_name
+    password: your_password
+    address: localhost:3306
+    database: mini-douyin
