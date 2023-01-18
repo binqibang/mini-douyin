@@ -1,8 +1,11 @@
 package controller
 
 import (
+	"github.com/binqibang/mini-douyin/handler"
+	"github.com/binqibang/mini-douyin/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"sync/atomic"
 )
 
@@ -84,9 +87,41 @@ func UserInfo(c *gin.Context) {
 			Response: Response{StatusCode: 0},
 			User:     user,
 		})
-	} else {
+		return
+	}
+
+	userIdString := c.Query("user_id")
+	userId, err := strconv.ParseInt(userIdString, 10, 64)
+	//检查是否转换成功
+	if err != nil {
 		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+			Response: Response{StatusCode: 1, StatusMsg: "User id is not valid (not int)" + err.Error()},
 		})
 	}
+	//转换类型
+	userInfo, err := handler.GetUserInfo(userId)
+
+	if err == nil && userInfo != nil {
+		userInfo := convUserModel2UserInfo(userInfo)
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 0},
+			User:     userInfo,
+		})
+	} else {
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 1, StatusMsg: err.Error()},
+		})
+	}
+}
+
+func convUserModel2UserInfo(userModel *model.User) User {
+	isFollow := handler.CheckIsFollow()
+	var userInfo = User{
+		Id:            userModel.UserID,
+		Name:          userModel.Username,
+		FollowCount:   userModel.FollowCount,
+		FollowerCount: userModel.FollowerCount,
+		IsFollow:      isFollow,
+	}
+	return userInfo
 }
