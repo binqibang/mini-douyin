@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"github.com/binqibang/mini-douyin/model"
 	"gorm.io/gorm"
 	"sync"
@@ -30,7 +31,14 @@ func GetUserInfo(userid int64) (*model.User, error) {
 
 // TODO: 完善设计
 
-// CheckIsFollow 检查一个用户是否关注另一用户
-func CheckIsFollow() bool {
-	return true
+// CheckIsFollow 检查host用户是否关注user用户
+func CheckIsFollow(userId int64, hostId int64) (bool, error) {
+	initOnce.Do(initUserInfoService)
+	//检查输入id是否合法
+	if userId == 0 || hostId == 0 {
+		err := errors.New("UserId or hostId is wrong")
+		return false, err
+	}
+	//TODO: 查询是否关注
+	return true, nil
 }

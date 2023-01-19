@@ -80,17 +80,23 @@ func Login(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
+	//获取鉴权信息
 	token := c.Query("token")
 
+	//获取hostId, 如果不成功，返回
+	var hostId int64
 	if user, exist := usersLoginInfo[token]; exist {
+		hostId = user.Id
+	} else {
 		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 0},
-			User:     user,
+			Response: Response{StatusCode: 1, StatusMsg: "User token is not valid (not int)"},
 		})
 		return
 	}
 
+	//获取用户id
 	userIdString := c.Query("user_id")
+	//将用户id字符串转换为int64类型
 	userId, err := strconv.ParseInt(userIdString, 10, 64)
 	//检查是否转换成功
 	if err != nil {
@@ -98,15 +104,22 @@ func UserInfo(c *gin.Context) {
 			Response: Response{StatusCode: 1, StatusMsg: "User id is not valid (not int)" + err.Error()},
 		})
 	}
-	//转换类型
+	//从数据库中读取用户信息
 	userInfo, err := handler.GetUserInfo(userId)
 
 	if err == nil && userInfo != nil {
-		userInfo := convUserModel2UserInfo(userInfo)
-		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 0},
-			User:     userInfo,
-		})
+		//将结构体转换为User结构体
+		userInfo, convErr := convUserModel2UserInfo(userInfo, userId, hostId)
+		if convErr == nil {
+			c.JSON(http.StatusOK, UserResponse{
+				Response: Response{StatusCode: 0},
+				User:     userInfo,
+			})
+		} else {
+			c.JSON(http.StatusOK, UserResponse{
+				Response: Response{StatusCode: 1, StatusMsg: err.Error()},
+			})
+		}
 	} else {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 1, StatusMsg: err.Error()},
@@ -114,8 +127,11 @@ func UserInfo(c *gin.Context) {
 	}
 }
 
-func convUserModel2UserInfo(userModel *model.User) User {
-	isFollow := handler.CheckIsFollow()
+func convUserModel2UserInfo(userModel *model.User, userId int64, hostId int64) (User, error) {
+	isFollow, checkErr := handler.CheckIsFollow(userId, hostId)
+	if checkErr != nil {
+		return User{}, checkErr
+	}
 	var userInfo = User{
 		Id:            userModel.UserID,
 		Name:          userModel.Username,
@@ -123,5 +139,5 @@ func convUserModel2UserInfo(userModel *model.User) User {
 		FollowerCount: userModel.FollowerCount,
 		IsFollow:      isFollow,
 	}
-	return userInfo
+	return userInfo, nil
 }
