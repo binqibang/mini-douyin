@@ -28,7 +28,7 @@ func (*User) TableName() string {
 type UserDao struct {
 }
 
-func (*UserDao) QueryByUserById(db *gorm.DB, userid int64) (*User, error) {
+func (*UserDao) QueryByUserById(userid int64) (*User, error) {
 	var user User
 	err := db.Where("user_id = ?", userid).Find(&user).Error
 	if err == gorm.ErrRecordNotFound {
@@ -40,7 +40,7 @@ func (*UserDao) QueryByUserById(db *gorm.DB, userid int64) (*User, error) {
 	return &user, nil
 }
 
-func (*UserDao) CreateUser(db *gorm.DB, user *User) error {
+func (*UserDao) CreateUser(user *User) error {
 	if err := db.Create(user).Error; err != nil {
 		return err
 	}

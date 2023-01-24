@@ -5,7 +5,15 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"sync"
 )
+
+var (
+	db       *gorm.DB
+	initOnce sync.Once
+)
+
+const configPathString = "config/settings_dev.yml"
 
 func InitDB(configPath string) *gorm.DB {
 	conf, err := config.LoadConfig(configPath)
@@ -21,4 +29,13 @@ func InitDB(configPath string) *gorm.DB {
 		log.Fatalf("can not connect database, %s", err)
 	}
 	return db
+}
+
+// 将InitDB函数封装为无参数无返回值函数，方便供initOnce使用
+func initDBProxy() {
+	db = InitDB(configPathString)
+}
+
+func init() {
+	initOnce.Do(initDBProxy)
 }
