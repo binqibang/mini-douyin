@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/binqibang/mini-douyin/handler"
+	"github.com/binqibang/mini-douyin/business"
 	"github.com/binqibang/mini-douyin/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -105,7 +105,7 @@ func UserInfo(c *gin.Context) {
 		})
 	}
 	//从数据库中读取用户信息
-	userInfo, err := handler.GetUserInfo(userId)
+	userInfo, err := business.GetUserInfo(userId)
 
 	if err == nil && userInfo != nil {
 		//将结构体转换为User结构体
@@ -128,7 +128,7 @@ func UserInfo(c *gin.Context) {
 }
 
 func convUserModel2UserInfo(userModel *model.User, userId int64, hostId int64) (User, error) {
-	isFollow, checkErr := handler.CheckIsFollow(userId, hostId)
+	isFollow, checkErr := business.CheckIsFollow(userId, hostId)
 	if checkErr != nil {
 		return User{}, checkErr
 	}
