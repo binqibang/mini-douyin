@@ -96,6 +96,14 @@ func UserInfo(c *gin.Context) {
 
 	//获取用户id
 	userIdString := c.Query("user_id")
+
+	if userIdString == "" {
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "User id is empty"},
+		})
+		return
+	}
+
 	//将用户id字符串转换为int64类型
 	userId, err := strconv.ParseInt(userIdString, 10, 64)
 	//检查是否转换成功
@@ -103,6 +111,7 @@ func UserInfo(c *gin.Context) {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User id is not valid (not int)" + err.Error()},
 		})
+		return
 	}
 	//从数据库中读取用户信息
 	userInfo, err := business.GetUserInfo(userId)
