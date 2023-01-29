@@ -6,12 +6,9 @@ import (
 	"testing"
 )
 
-var (
-	db      = model.InitDB("../config/settings_dev.yml")
-	userDao = model.UserDao{}
-)
+var userDao = model.UserDao{}
 
 func TestCreateUser(t *testing.T) {
 	user := model.User{Username: "tom"}
-	require.NoError(t, userDao.CreateUser(db, &user))
+	require.NoError(t, userDao.CreateUser(&user))
 }

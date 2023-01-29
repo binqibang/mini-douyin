@@ -13,12 +13,13 @@ var (
 	initOnce sync.Once
 )
 
-const configPathString = "config/settings_dev.yml"
+// 本地开发时改为自己本机上的绝对路径，便于单元测试
+const configPathString = "D:/GoProjects/mini-douyin/config/settings_dev.yml"
 
 func InitDB(configPath string) *gorm.DB {
 	conf, err := config.LoadConfig(configPath)
 	if err != nil {
-		log.Fatalf("cannot read conf file: %s", err)
+		log.Fatalf("can not read conf file: %s", err)
 	}
 	// connect database
 	mysqlConf := conf.Database.Mysql

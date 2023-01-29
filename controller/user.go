@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-	"sync/atomic"
 )
 
 // usersLoginInfo use map to store user info, and key is username+password for demo
@@ -37,25 +36,18 @@ type UserResponse struct {
 
 func Register(c *gin.Context) {
 	username := c.Query("username")
-	password := c.Query("password")
+	password := business.Encrypt(c.Query("password"))
 
-	token := username + password
+	user := model.User{Username: username, Password: password}
+	err := business.CreateUser(&user)
 
-	if _, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, UserResponse{
+			Response: Response{StatusCode: 1, StatusMsg: err.Error()},
 		})
 	} else {
-		atomic.AddInt64(&userIdSequence, 1)
-		newUser := User{
-			Id:   userIdSequence,
-			Name: username,
-		}
-		usersLoginInfo[token] = newUser
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 0},
-			UserId:   userIdSequence,
-			Token:    username + password,
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 0, StatusMsg: "Register successfully!"},
 		})
 	}
 }
