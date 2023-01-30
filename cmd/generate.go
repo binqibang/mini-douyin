@@ -12,7 +12,7 @@ import (
 
 // Use `gen` pkg to generate `gorm` struct from mysql.
 func main() {
-	conf, err := config.LoadConfig("../conf/settings_dev.yml")
+	conf, err := config.LoadConfig("D:/GoProjects/mini-douyin/config/settings_dev.yml")
 	if err != nil {
 		log.Fatalf("cannot read conf file: %s", err)
 	}
@@ -56,8 +56,7 @@ func main() {
 	})
 
 	// generate model
-	user := g.GenerateModel("user", jsonField)
-	video := g.GenerateModel("video", jsonField)
-	g.ApplyBasic(user, video)
+	comment := g.GenerateModel("video_comment", jsonField)
+	g.ApplyBasic(comment)
 	g.Execute()
 }
