@@ -21,7 +21,7 @@ var usersLoginInfo = map[string]User{
 	},
 }
 
-var userIdSequence = int64(1)
+//var userIdSequence = int64(1)
 
 type UserLoginResponse struct {
 	Response
@@ -56,17 +56,18 @@ func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	token := username + password
+	user, err := business.Authentication(username, password)
 
-	if user, exist := usersLoginInfo[token]; exist {
+	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 0},
-			UserId:   user.Id,
-			Token:    token,
+			Response: Response{StatusCode: 1, StatusMsg: "Incorrect username or password!"},
 		})
 	} else {
+		token, _ := business.CreateToken(user.UserID)
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+			Response: Response{StatusCode: 0},
+			UserId:   user.UserID,
+			Token:    token,
 		})
 	}
 }

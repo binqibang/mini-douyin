@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/binqibang/mini-douyin/model"
+	"github.com/dgrijalva/jwt-go/v4"
 	"sync"
+	"time"
 )
 
 var uerInitOnce sync.Once
@@ -58,3 +60,35 @@ func CreateUser(user *model.User) error {
 	uerInitOnce.Do(initUserService)
 	return userDao.CreateUser(user)
 }
+
+// Authentication 登录验证
+func Authentication(username string, password string) (*model.User, error) {
+	uerInitOnce.Do(initUserService)
+	user, err := userDao.QueryByUserByUsername(username, password)
+	return user, err
+}
+
+func CreateToken(uid int64) (string, error) {
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"uid": uid,
+		"exp": time.Now().Add(time.Minute * 15).Unix(),
+	})
+	token, err := at.SignedString([]byte("bcdedit"))
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+
+//func ParseToken(token string, secret string) (string, error) {
+//	claim, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+//		return []byte(secret), nil
+//	})
+//	if err != nil {
+//		return "", err
+//	}
+//	if uid, ok := claim.Claims.(jwt.MapClaims)["uid"].(string); ok {
+//		return uid, nil
+//	}
+//	return "", fmt.Errorf("fail parse")
+//}

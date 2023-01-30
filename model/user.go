@@ -40,6 +40,19 @@ func (*UserDao) QueryByUserById(userid int64) (*User, error) {
 	return &user, nil
 }
 
+func (*UserDao) QueryByUserByUsername(username string, password string) (*User, error) {
+	var user User
+	err := db.Where("username = ? AND password = ?", username, password).First(&user).Error
+
+	if err != nil {
+		return nil, err
+	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (*UserDao) CreateUser(user *User) error {
 	if err := db.Create(user).Error; err != nil {
 		return err

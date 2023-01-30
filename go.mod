@@ -3,19 +3,16 @@ module github.com/binqibang/mini-douyin
 go 1.17
 
 require (
-	github.com/gavv/httpexpect/v2 v2.8.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/spf13/viper v1.14.0
-	github.com/stretchr/testify v1.8.1
 	gorm.io/driver/mysql v1.4.5
-	gorm.io/gen v0.3.19
 	gorm.io/gorm v1.24.3
 )
 
 require (
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
