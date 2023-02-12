@@ -65,7 +65,7 @@ func Feed(c *gin.Context) {
 		vl[i].Id = v[i].Id
 		vl[i].Author.Name = v[i].Author
 		vl[i].CoverUrl = v[i].CoverUrl
-		vl[i].PlayUrl = "http://192.168.31.186:8081/" + v[i].PlayUrl
+		vl[i].PlayUrl = "http://192.168.113.97:8080/douyin/feed_vedio/?path=" + v[i].PlayUrl
 		vl[i].FavoriteCount = v[i].FavoriteCount
 		vl[i].CommentCount = v[i].CommentCount
 		vl[i].IsFavorite = v[i].IsFavorite

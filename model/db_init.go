@@ -14,7 +14,7 @@ var (
 )
 
 // 本地开发时改为自己本机上的绝对路径，便于单元测试
-const configPathString = "D:/GoProjects/mini-douyin/config/settings_dev.yml"
+const configPathString = "E:/douyin/mini-douyin/config/settings_dev.yml"
 
 func InitDB(configPath string) *gorm.DB {
 	conf, err := config.LoadConfig(configPath)
@@ -24,7 +24,7 @@ func InitDB(configPath string) *gorm.DB {
 	// connect database
 	mysqlConf := conf.Database.Mysql
 	dsn := mysqlConf.UserName + ":" + mysqlConf.Password
-	dsn += "@(" + mysqlConf.Address + ")/" + mysqlConf.Database + "?charset=utf8"
+	dsn += "@(" + mysqlConf.Address + ")/" + mysqlConf.Database + "?charset=utf8&parseTime=True"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("can not connect database, %s", err)

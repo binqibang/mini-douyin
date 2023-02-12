@@ -21,6 +21,6 @@ type Video struct {
 }
 
 // TableName Video's table name
-func (*Video) TableName() string {
-	return "video"
-}
+//func (*controller.Video) TableName() string {
+//	return "video"
+//}

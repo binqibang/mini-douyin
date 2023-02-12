@@ -5,7 +5,6 @@ import (
 	"github.com/binqibang/mini-douyin/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 // usersLoginInfo use map to store user info, and key is username+password for demo
@@ -56,11 +55,11 @@ func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	user, err := business.Authentication(username, password)
+	user, err := business.Check_login(username, password)
 
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "Incorrect username or password!"},
+			Response: Response{StatusCode: 1, StatusMsg: err.Error()},
 		})
 	} else {
 		token, _ := business.CreateToken(user.UserID)
@@ -97,21 +96,12 @@ func UserInfo(c *gin.Context) {
 		return
 	}
 
-	//将用户id字符串转换为int64类型
-	userId, err := strconv.ParseInt(userIdString, 10, 64)
-	//检查是否转换成功
-	if err != nil {
-		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User id is not valid (not int)" + err.Error()},
-		})
-		return
-	}
 	//从数据库中读取用户信息
-	userInfo, err := business.GetUserInfo(userId)
+	userInfo, err := business.GetUserInfo(userIdString)
 
 	if err == nil && userInfo != nil {
 		//将结构体转换为User结构体
-		userInfo, convErr := convUserModel2UserInfo(userInfo, userId, hostId)
+		userInfo, convErr := convUserModel2UserInfo(userInfo, userIdString, hostId)
 		if convErr == nil {
 			c.JSON(http.StatusOK, UserResponse{
 				Response: Response{StatusCode: 0},
@@ -129,7 +119,7 @@ func UserInfo(c *gin.Context) {
 	}
 }
 
-func convUserModel2UserInfo(userModel *model.User, userId int64, hostId int64) (User, error) {
+func convUserModel2UserInfo(userModel *model.User, userId string, hostId int64) (User, error) {
 	isFollow, checkErr := business.CheckIsFollow(userId, hostId)
 	if checkErr != nil {
 		return User{}, checkErr

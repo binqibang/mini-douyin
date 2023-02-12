@@ -4,7 +4,7 @@ app:
 # configurations of database, like mysql, redis, ...
 database:
   mysql:
-    username: your_name
-    password: your_password
+    username: root
+    password: m1998526
     address: localhost:3306
-    database: mini-douyin
+    database: mini_douyin

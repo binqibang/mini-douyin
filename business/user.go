@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/binqibang/mini-douyin/model"
 	"github.com/dgrijalva/jwt-go/v4"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -19,9 +20,14 @@ func initUserService() {
 }
 
 // GetUserInfo 获取用户信息
-func GetUserInfo(userid int64) (*model.User, error) {
+func GetUserInfo(userid string) (*model.User, error) {
 	uerInitOnce.Do(initUserService)
-	user, err := userDao.QueryByUserById(userid)
+	//将用户id字符串转换为int64类型
+	userId, err := strconv.ParseInt(userid, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	user, err := userDao.QueryByUserById(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -31,9 +37,13 @@ func GetUserInfo(userid int64) (*model.User, error) {
 // TODO: 完善设计
 
 // CheckIsFollow 检查host用户是否关注user用户
-func CheckIsFollow(userId int64, hostId int64) (bool, error) {
+func CheckIsFollow(userid string, hostId int64) (bool, error) {
 	uerInitOnce.Do(initUserService)
 	//检查输入id是否合法
+	userId, err := strconv.ParseInt(userid, 10, 64)
+	if err != nil {
+		return false, err
+	}
 	if userId == 0 || hostId == 0 {
 		err := errors.New("UserId or hostId is wrong")
 		return false, err
@@ -61,11 +71,20 @@ func CreateUser(user *model.User) error {
 	return userDao.CreateUser(user)
 }
 
-// Authentication 登录验证
-func Authentication(username string, password string) (*model.User, error) {
+// Check_login 登录验证
+func Check_login(username string, password string) (*model.User, error) {
 	uerInitOnce.Do(initUserService)
-	user, err := userDao.QueryByUserByUsername(username, password)
+	user, err := userDao.QueryByUserByUsername(username, Encrypt(password))
 	return user, err
+}
+
+// Authentication 验证token
+func Authentication(token string, uidPost string) (bool, error) {
+	uid, err := ParseToken(token, "bcdedit")
+	if uid == uidPost {
+		return true, nil
+	}
+	return false, err
 }
 
 func CreateToken(uid int64) (string, error) {
@@ -80,15 +99,15 @@ func CreateToken(uid int64) (string, error) {
 	return token, nil
 }
 
-//func ParseToken(token string, secret string) (string, error) {
-//	claim, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-//		return []byte(secret), nil
-//	})
-//	if err != nil {
-//		return "", err
-//	}
-//	if uid, ok := claim.Claims.(jwt.MapClaims)["uid"].(string); ok {
-//		return uid, nil
-//	}
-//	return "", fmt.Errorf("fail parse")
-//}
+func ParseToken(token string, secret string) (string, error) {
+	claim, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+	if err != nil {
+		return "", err
+	}
+	if uid, ok := claim.Claims.(jwt.MapClaims)["uid"].(string); ok {
+		return uid, nil
+	}
+	return "", fmt.Errorf("fail parse")
+}
