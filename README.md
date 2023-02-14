@@ -24,3 +24,13 @@ test 目录下为不同场景的功能测试case，可用于验证功能实现�
 其中 common.go 中的 _serverAddr_ 为服务部署的地址，默认为本机地址，可以根据实际情况修改
 
 测试数据写在 demo_data.go 中，用于列表接口的 mock 测试
+
+### Token
+
+Token的验证在business/user.go里的ParseToken和Authentication函数，secret暂时默认是"bcdedit"
+
+需要先使用Login接口加上自己数据库里的username和password得到Token，再复制Token到各自的接口Authentication
+
+解码后的id比对时要统一string或者int类型
+
+具体可以参考controller/comment.go
