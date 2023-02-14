@@ -24,7 +24,7 @@ func InitDB(configPath string) *gorm.DB {
 	// connect database
 	mysqlConf := conf.Database.Mysql
 	dsn := mysqlConf.UserName + ":" + mysqlConf.Password
-	dsn += "@(" + mysqlConf.Address + ")/" + mysqlConf.Database + "?charset=utf8"
+	dsn += "@(" + mysqlConf.Address + ")/" + mysqlConf.Database + "?charset=utf8&parseTime=True"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("can not connect database, %s", err)
