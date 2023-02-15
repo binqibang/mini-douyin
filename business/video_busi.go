@@ -25,9 +25,9 @@ func GetTenVideos() ([10]model.Video, error) {
 		vl[i].Id = v[i].Id
 		vl[i].Author = v[i].Author
 		vl[i].Title = v[i].Title
-		vl[i].CoverUrl = "http://192.168.113.97:8080/douyin/feed_vedio/?path=" + v[i].CoverUrl
+		vl[i].CoverUrl = "http://192.168.178.97:8080/douyin/feed_vedio/?path=" + v[i].CoverUrl
 		//PlayUrl改为本机IP
-		vl[i].PlayUrl = "http://192.168.113.97:8080/douyin/feed_vedio/?path=" + v[i].PlayUrl
+		vl[i].PlayUrl = "http://192.168.178.97:8080/douyin/feed_vedio/?path=" + v[i].PlayUrl
 		vl[i].FavoriteCount = v[i].FavoriteCount
 		vl[i].CommentCount = v[i].CommentCount
 		vl[i].IsFavorite = v[i].IsFavorite

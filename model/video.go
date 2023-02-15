@@ -18,15 +18,15 @@ type Video struct {
 	//CreatedAt      time.Time      `gorm:"column:created_at;type:datetime(3)" json:"created_at"`
 	//UpdatedAt      time.Time      `gorm:"column:updated_at;type:datetime(3)" json:"updated_at"`
 	//DeletedAt      gorm.DeletedAt `gorm:"column:deleted_at;type:datetime(3)" json:"deleted_at"`
-	Id            int64     `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id"`
+	Id            int64     `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id,omitempty"`
 	Author        string    `gorm:"column:author;type:varchar(255);" json:"author"`
 	Title         string    `gorm:"column:title;type:varchar(255);" json:"title"`
 	PlayUrl       string    `gorm:"column:play_url;type:varchar(255);" json:"play_url"`
 	CoverUrl      string    `gorm:"column:cover_url;type:varchar(255);" json:"cover_url"`
 	FavoriteCount int64     `gorm:"column:favorite_count;type:int;" json:"favorite_count"`
 	CommentCount  int64     `gorm:"column:comment_count;type:int;" json:"comment_count"`
-	IsFavorite    int64     `gorm:"column:is_favorite;type:int;" json:"is_favorite"`
-	PublishTime   time.Time `gorm:"column:publish_time;type:datetime(3);" json:"publish_time"`
+	IsFavorite    bool      `gorm:"column:is_favorite;type:int;" json:"is_favorite"`
+	PublishTime   time.Time `gorm:"column:publish_time;type:datetime(3);" json:"publish_time,omitempty"`
 }
 
 // TableName Video's table name

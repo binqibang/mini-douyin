@@ -14,7 +14,7 @@ var (
 )
 
 // 本地开发时改为自己本机上的绝对路径，便于单元测试
-const configPathString = "E:/douyin/mini-douyin/config/settings_dev.yml"
+const configPathString = "C:\\Users\\13099\\GolandProjects\\mini-douyin\\config\\settings_dev.yml"
 
 func InitDB(configPath string) *gorm.DB {
 	conf, err := config.LoadConfig(configPath)
