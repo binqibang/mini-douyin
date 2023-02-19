@@ -42,7 +42,7 @@ func (s Video_xes) Less(i, j int) bool {
 func Feed(c *gin.Context) {
 	//返回从数据库中查找最近的一条数据
 	fmt.Println("test")
-	dsn := "root:123123@tcp(localhost:3306)/mini-douyin?charset=utf8&parseTime=True&loc=Local"
+	dsn := "root:m1998526@tcp(localhost:3306)/mini-douyin?charset=utf8&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Println("连接数据库失败")
@@ -65,12 +65,13 @@ func Feed(c *gin.Context) {
 		vl[i].Id = v[i].Id
 		vl[i].Author.Name = v[i].Author
 		vl[i].CoverUrl = v[i].CoverUrl
-		vl[i].PlayUrl = "http://192.168.31.186:8081/" + v[i].PlayUrl
+		//vl[i].PlayUrl = "http://192.168.31.186:8081/" + v[i].PlayUrl
+		vl[i].PlayUrl = "http://10.28.246.222:8080/" + v[i].PlayUrl
 		vl[i].FavoriteCount = v[i].FavoriteCount
 		vl[i].CommentCount = v[i].CommentCount
 		vl[i].IsFavorite = v[i].IsFavorite
 	}
-
+	//定义响应内容
 	c.JSON(http.StatusOK, FeedResponse{
 		Response: Response{StatusCode: 0},
 		//VideoList: DemoVideos,

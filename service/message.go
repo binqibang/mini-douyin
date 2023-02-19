@@ -12,6 +12,7 @@ import (
 var chatConnMap = sync.Map{}
 
 func RunMessageServer() {
+	//创建tcp连接，监听端口
 	listen, err := net.Listen("tcp", "127.0.0.1:9090")
 	if err != nil {
 		fmt.Printf("Run message sever failed: %v\n", err)
@@ -19,12 +20,13 @@ func RunMessageServer() {
 	}
 
 	for {
+		// 返回连接
 		conn, err := listen.Accept()
 		if err != nil {
 			fmt.Printf("Accept conn failed: %v\n", err)
 			continue
 		}
-
+		//并发处理
 		go process(conn)
 	}
 }
@@ -42,7 +44,7 @@ func process(conn net.Conn) {
 			fmt.Printf("Read message failed: %v\n", err)
 			continue
 		}
-
+		//发送信息“事件”
 		var event = controller.MessageSendEvent{}
 		_ = json.Unmarshal(buf[:n], &event)
 		fmt.Printf("Receive Message：%+v\n", event)
@@ -59,7 +61,7 @@ func process(conn net.Conn) {
 			fmt.Printf("User %d offline\n", event.ToUserId)
 			continue
 		}
-
+		//接收信息
 		pushEvent := controller.MessagePushEvent{
 			FromUserId: event.UserId,
 			MsgContent: event.MsgContent,

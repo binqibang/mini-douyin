@@ -7,4 +7,4 @@ database:
     username: root
     password: m1998526
     address: localhost:3306
-    database: mini_douyin
+    database: mini-douyin

@@ -17,7 +17,9 @@ type CommentActionResponse struct {
 }
 
 // CommentAction no practical effect, just check if token is valid
+// 发表评论：在Comment表增加一条记录，包含用户id、评论内容
 func CommentAction(c *gin.Context) {
+	// c.Query：从请求中获取参数(POST)
 	token := c.Query("token")
 	actionType := c.Query("action_type")
 	uid := c.Query("user_id")

@@ -72,7 +72,7 @@ func Login(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
-	//获取鉴权信息
+	//获取token
 	token := c.Query("token")
 
 	//获取hostId, 如果不成功，返回

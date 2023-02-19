@@ -54,7 +54,6 @@ type VideoDao struct {
 }
 
 func (*VideoDao) QueryVideoList() ([]Video, error) {
-
 	videos := []Video{}
 	err := db.Find(&videos).Error
 	fmt.Println(videos)
