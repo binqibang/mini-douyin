@@ -18,3 +18,16 @@ type UserLike struct {
 func (*UserLike) TableName() string {
 	return "user_like"
 }
+
+// 获取ID对应用户的喜欢列表
+func (*UserLike) QueryUserLikeById(id int64) ([]UserLike, error) {
+	var user_like []UserLike
+	err := db.Where("user_id = ?", id).Find(&user_like).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return user_like, nil
+}
