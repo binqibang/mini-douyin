@@ -1,11 +1,14 @@
 package controller
 
 import (
-	"net/http"
 
 	"github.com/binqibang/mini-douyin/business"
 	"github.com/binqibang/mini-douyin/model"
 	"github.com/gin-gonic/gin"
+
+	"net/http"
+	"strconv"
+
 )
 
 // usersLoginInfo use map to store user info, and key is username+password for demo
@@ -75,24 +78,28 @@ func Login(c *gin.Context) {
 func UserInfo(c *gin.Context) {
 	//获取鉴权信息
 	token := c.Query("token")
+	userIdString := c.Query("user_id")
 
-	//获取hostId, 如果不成功，返回
-	var hostId int64
-	if user, exist := usersLoginInfo[token]; exist {
-		hostId = user.Id
-	} else {
+	if userIdString == "" || token == "" {
 		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User token is not valid (not int)"},
+			Response: Response{StatusCode: 1, StatusMsg: "User id is empty"},
 		})
 		return
 	}
 
-	//获取用户id
-	userIdString := c.Query("user_id")
-
-	if userIdString == "" {
+	var hostId int64
+	exist, err := business.Authentication(token, userIdString)
+	if exist {
+		hostIdTemp, err := business.ParseToken(token, "bcdedit")
+		if err != nil {
+			c.JSON(http.StatusOK, UserResponse{
+				Response: Response{StatusCode: 1, StatusMsg: "Parse User token error"},
+			})
+		}
+		hostId, err = strconv.ParseInt(hostIdTemp, 10, 64)
+	} else {
 		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User id is empty"},
+			Response: Response{StatusCode: 1, StatusMsg: "User token is not valid"},
 		})
 		return
 	}

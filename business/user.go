@@ -72,6 +72,14 @@ func CreateUser(user *model.User) error {
 	return userDao.CreateUser(user)
 }
 
+func GetUserById(userId int64) model.User {
+	user, err := userDao.QueryByUserById(userId)
+	if err != nil {
+		return model.User{}
+	}
+	return *user
+}
+
 // Check_login 登录验证
 func Check_login(username string, password string) (*model.User, error) {
 	uerInitOnce.Do(initUserService)
