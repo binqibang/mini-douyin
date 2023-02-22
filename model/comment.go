@@ -20,3 +20,15 @@ type VideoComment struct {
 func (*VideoComment) TableName() string {
 	return "video_comment"
 }
+
+type VideoCommentDao struct {
+}
+
+func (*VideoCommentDao) QueryByVideo(videoId int64) ([]VideoComment, error) {
+	var comments []VideoComment
+	err := db.Where("video_id = ?", videoId).Find(&comments).Error
+	if err != nil {
+		return nil, err
+	}
+	return comments, nil
+}
