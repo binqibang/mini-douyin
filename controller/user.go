@@ -133,3 +133,18 @@ func convUserModel2UserInfo(userModel *model.User, userId string, hostId int64) 
 	}
 	return userInfo, nil
 }
+
+func convUserModel2UserInfo1(userModel *model.User, userId int64) (User, error) {
+	isFollow, checkErr := business.CheckIsFollow(userId)
+	if checkErr != nil {
+		return User{}, checkErr
+	}
+	var userInfo = User{
+		Id:            userModel.UserID,
+		Name:          userModel.Username,
+		FollowCount:   userModel.FollowCount,
+		FollowerCount: userModel.FollowerCount,
+		IsFollow:      isFollow,
+	}
+	return userInfo, nil
+}

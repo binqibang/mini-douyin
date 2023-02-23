@@ -82,4 +82,18 @@ CREATE TABLE `video_comment`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
+-- ----------------------------
+-- Table structure for user_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `user_relation`;
+CREATE TABLE `user_relation`  (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `user_id` int NOT NULL,
+    `to_user_id` int NOT NULL,
+    `created_at` datetime(3) NULL DEFAULT NULL,
+    `updated_at` datetime(3) NULL DEFAULT NULL,
+    `deleted_at` datetime(3) NULL DEFAULT NULL,
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
 SET FOREIGN_KEY_CHECKS = 1;

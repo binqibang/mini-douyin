@@ -37,19 +37,15 @@ func GetUserInfo(userid string) (*model.User, error) {
 // TODO: 完善设计
 
 // CheckIsFollow 检查host用户是否关注user用户
-func CheckIsFollow(userid string, hostId int64) (bool, error) {
-	uerInitOnce.Do(initUserService)
+func CheckIsFollow(userID int64) (bool, error) {
 	//检查输入id是否合法
-	userId, err := strconv.ParseInt(userid, 10, 64)
-	if err != nil {
-		return false, err
-	}
-	if userId == 0 || hostId == 0 {
+	if userID == 0 {
 		err := errors.New("UserId or hostId is wrong")
 		return false, err
 	}
 	//TODO: 查询是否关注
-	return true, nil
+	user, err := userDao.QueryByUserById(userID)
+	return user.IsFollow, err
 }
 
 const salt = "mini-douyin"

@@ -14,8 +14,7 @@ func FavoriteAction(c *gin.Context) {
 	vid := c.Query("video_id")
 	if exist, _ := business.Authentication(token, uid); exist {
 		user, _ := business.GetUserInfo(uid)
-		video =
-			c.JSON(http.StatusOK, Response{StatusCode: 0})
+		c.JSON(http.StatusOK, Response{StatusCode: 0})
 	} else {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	}
