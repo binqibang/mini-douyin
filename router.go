@@ -13,7 +13,8 @@ func initRouter(r *gin.Engine) {
 
 	// basic apis
 	apiRouter.GET("/feed/", controller.Feed)
-	apiRouter.GET("/feed_video/", controller.FeedVedio)
+	apiRouter.GET("/feed_video/", controller.FeedVideo)
+	apiRouter.GET("/feed_photo/", controller.FeedPhoto)
 	apiRouter.GET("/user/", controller.UserInfo)
 	apiRouter.POST("/user/register/", controller.Register)
 	apiRouter.POST("/user/login/", controller.Login)

@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/binqibang/mini-douyin/business"
+	"github.com/binqibang/mini-douyin/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -15,8 +16,12 @@ type VideoListResponse struct {
 	VideoList []Video `json:"video_list"`
 }
 
-// Publish 视频投稿
+// Publish check token then save upload file to public directory
 func Publish(c *gin.Context) {
+
+	//连接数据库
+	//存入日期，author
+
 	title := c.PostForm("title")
 	if title == "" {
 		c.JSON(http.StatusOK, Response{
@@ -54,7 +59,7 @@ func Publish(c *gin.Context) {
 	filename := filepath.Base(data.Filename)
 	now := time.Now()
 	finalName := fmt.Sprintf("%d_%d_%d_%s", now.Year(), now.Month(), now.Day(), filename)
-	if !business.IsExistPath("./public/") {
+	if !IsExistPath("./public/") {
 		err = os.MkdirAll("./public/", os.ModePerm)
 		if err != nil {
 			c.JSON(http.StatusOK, Response{
@@ -81,10 +86,48 @@ func Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
+	conf, err := config.LoadConfig("/config/settings_dev.yml")
+	token := c.Query("token")
+	user_id := c.Query("user_id")
+	ok, err := business.Authentication(token, user_id)
+	if !ok {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  err.Error(),
+		})
+		return
+	}
+
+	videos, _ := business.QueryVideosByUserId(user_id)
+	user, _ := business.GetUserInfo(user_id)
+	vl := []Video{}
+	for i := 0; i < len(videos); i++ {
+		vl = append(vl, Video{})
+		vl[i].Id = videos[i].UserId
+		vl[i].Author = User{Id: user.UserID, Name: user.Username, FollowCount: user.FollowCount, FollowerCount: user.FollowerCount, IsFollow: user.IsFollow}
+		vl[i].CoverUrl = conf.App.Address + "/douyin/feed_vedio/?path=" + videos[i].CoverUrl
+		vl[i].PlayUrl = conf.App.Address + "/douyin/feed_vedio/?path=" + videos[i].PlayUrl
+		vl[i].FavoriteCount = videos[i].FavoriteCount
+		vl[i].CommentCount = videos[i].CommentCount
+		vl[i].IsFavorite = videos[i].IsFavorite
+	}
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		VideoList: DemoVideos,
+		VideoList: vl,
 	})
+}
+func IsExistPath(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsExist(err) {
+			return true
+		}
+		if os.IsNotExist(err) {
+			return false
+		}
+		return false
+	}
+	return true
 }
