@@ -29,7 +29,7 @@ func FavoriteList(c *gin.Context) {
 	user_id, _ := strconv.Atoi(c.Query("user_id"))
 	temp, _ := user_like.QueryUserLikeById(int64(user_id))
 
-	conf, _ := config.LoadConfig("C:/Users/13099/GolandProjects/mini-douyin/config/settings_dev.yml")
+	conf, _ := config.LoadConfig("./config/settings_dev.yml")
 	ip := conf.App.Address
 	vl := []Video{}
 	videoDao := model.VideoDao{}

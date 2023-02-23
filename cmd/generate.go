@@ -12,7 +12,7 @@ import (
 
 // Use `gen` pkg to generate `gorm` struct from mysql.
 func main() {
-	conf, err := config.LoadConfig("D:/GoProjects/mini-douyin/config/settings_dev.yml")
+	conf, err := config.LoadConfig("E:/douyin/mini-douyin/config/settings_dev.yml")
 	if err != nil {
 		log.Fatalf("cannot read conf file: %s", err)
 	}

@@ -1,10 +1,10 @@
 # configurations of app, like address, ...
 app:
-  address: http://10.128.185.115:8080
+  address: http://10.28.196.179:8080
 # configurations of database, like mysql, redis, ...
 database:
   mysql:
     username: root
-    password: 123123
+    password: m1998526
     address: localhost:3306
-    database: mini-douyin
+    database: mini_douyin

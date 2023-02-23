@@ -67,6 +67,14 @@ func md5Hex(str string) string {
 	return md5str
 }
 
+func GetUserById(userId int64) model.User {
+	user, err := userDao.QueryByUserById(userId)
+	if err != nil {
+		return model.User{}
+	}
+	return *user
+}
+
 func CreateUser(user *model.User) error {
 	uerInitOnce.Do(initUserService)
 	return userDao.CreateUser(user)
@@ -90,7 +98,7 @@ func Authentication(token string, uidPost string) (bool, error) {
 
 func CreateToken(uid int64) (string, error) {
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"uid": uid,
+		"uid": strconv.FormatInt(uid, 10),
 		"exp": time.Now().Add(time.Minute * 15).Unix(),
 	})
 	token, err := at.SignedString([]byte("bcdedit"))
