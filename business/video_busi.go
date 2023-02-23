@@ -11,7 +11,7 @@ var videoDao model.VideoDao
 // 这个函数用来获得十个最近更新的视频
 // 首先，获取数据库中的所有视频，然后按照时间排序，取前10个视频
 func GetTenVideos() ([10]model.Video, error) {
-	conf, err := config.LoadConfig("C:/Users/13099/GolandProjects/mini-douyin/config/settings_dev.yml")
+	conf, err := config.LoadConfig("config/settings_dev.yml")
 	ip := conf.App.Address
 	videos, err := videoDao.QueryVideoList()
 	sort.SliceStable(videos, func(i, j int) bool {

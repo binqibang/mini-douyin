@@ -86,7 +86,7 @@ func Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
-	conf, err := config.LoadConfig("C:/Users/13099/GolandProjects/mini-douyin/config/settings_dev.yml")
+	conf, err := config.LoadConfig("/config/settings_dev.yml")
 	token := c.Query("token")
 	user_id := c.Query("user_id")
 	ok, err := business.Authentication(token, user_id)
