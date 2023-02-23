@@ -2,13 +2,13 @@ package controller
 
 import (
 	"fmt"
-	"net/http"
-	"path/filepath"
-
-	"github.com/binqibang/mini-douyin/business"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"github.com/binqibang/mini-douyin/business"
+	"os"
+	"path/filepath"
+	"time"
 )
-
 type VideoListResponse struct {
 	Response
 	VideoList []Video `json:"video_list"`
@@ -16,14 +16,36 @@ type VideoListResponse struct {
 
 // Publish check token then save upload file to public directory
 func Publish(c *gin.Context) {
-	token := c.PostForm("token")
 
-	if _, exist := usersLoginInfo[token]; !exist {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	//连接数据库
+	//存入日期，author
+
+	title := c.PostForm("title")
+	if title == "" {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  "title不能为空",
+		})
+		return
+	}
+
+	token := c.PostForm("token")
+	if token == "" {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  "token不能为空",
+		})
 		return
 	}
 
 	data, err := c.FormFile("data")
+	if data == nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  "data不能为空",
+		})
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -33,8 +55,18 @@ func Publish(c *gin.Context) {
 	}
 
 	filename := filepath.Base(data.Filename)
-	user := usersLoginInfo[token]
-	finalName := fmt.Sprintf("%d_%s", user.Id, filename)
+	now := time.Now()
+	finalName := fmt.Sprintf("%d_%d_%d_%s", now.Year(), now.Month(), now.Day(), filename)
+	if !IsExistPath("./public/") {
+		err = os.MkdirAll("./public/", os.ModePerm)
+		if err != nil {
+			c.JSON(http.StatusOK, Response{
+				StatusCode: 1,
+				StatusMsg:  err.Error(),
+			})
+			return
+		}
+	}
 	saveFile := filepath.Join("./public/", finalName)
 	if err := c.SaveUploadedFile(data, saveFile); err != nil {
 		c.JSON(http.StatusOK, Response{
@@ -46,7 +78,7 @@ func Publish(c *gin.Context) {
 
 	c.JSON(http.StatusOK, Response{
 		StatusCode: 0,
-		StatusMsg:  finalName + " uploaded successfully",
+		StatusMsg:  finalName + " upload success",
 	})
 }
 
