@@ -25,6 +25,31 @@ type VideoList struct{}
 
 // FavoriteList all users have same favorite video list
 func FavoriteList(c *gin.Context) {
+	//测试
+	user_like := model.UserLike{}
+	user_id, _ := strconv.Atoi(c.Query("user_id"))
+	temp, _ := user_like.QueryUserLikeById(int64(user_id))
+
+	conf, _ := config.LoadConfig("E:/字节青训营/mini-douyin/config/settings_dev.yml")
+	ip := conf.App.Address
+	vl := []Video{}
+	videoDao := model.VideoDao{}
+	for i := 0; i < len(temp); i++ {
+		videoTemp, _ := videoDao.QueryVideoById(temp[i].VideoID)
+
+		video := Video{}
+		video.Id = videoTemp.VideoId
+		video.Author.Name = videoTemp.Author
+		video.Title = videoTemp.Title
+		video.CoverUrl = ip + "/douyin/feed_photo/?path=" + videoTemp.CoverUrl
+		video.PlayUrl = ip + "/douyin/feed_video/?path=" + videoTemp.PlayUrl
+		video.FavoriteCount = videoTemp.FavoriteCount
+		video.CommentCount = videoTemp.CommentCount
+		video.IsFavorite = videoTemp.IsFavorite
+
+		vl = append(vl, video)
+		log.Printf(strconv.Itoa(int(video.FavoriteCount)))
+	}
 
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
