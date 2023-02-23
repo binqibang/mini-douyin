@@ -2,6 +2,7 @@ package business
 
 import (
 	"github.com/binqibang/mini-douyin/model"
+	"os"
 	"sort"
 )
 
@@ -34,4 +35,24 @@ func GetTenVideos() ([10]model.Video, error) {
 		vl[i].PublishTime = v[i].PublishTime
 	}
 	return vl, err
+}
+
+type Response struct {
+	StatusCode int32  `json:"status_code"`
+	StatusMsg  string `json:"status_msg,omitempty"`
+}
+
+// IsExistPath 判断文件或文件夹是否存在
+func IsExistPath(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsExist(err) {
+			return true
+		}
+		if os.IsNotExist(err) {
+			return false
+		}
+		return false
+	}
+	return true
 }
