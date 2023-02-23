@@ -4,11 +4,12 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
-	"github.com/binqibang/mini-douyin/model"
-	"github.com/dgrijalva/jwt-go/v4"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/binqibang/mini-douyin/model"
+	"github.com/dgrijalva/jwt-go/v4"
 )
 
 var uerInitOnce sync.Once
@@ -67,6 +68,14 @@ func CreateUser(user *model.User) error {
 	return userDao.CreateUser(user)
 }
 
+func GetUserById(userId int64) model.User {
+	user, err := userDao.QueryByUserById(userId)
+	if err != nil {
+		return model.User{}
+	}
+	return *user
+}
+
 // Check_login 登录验证
 func Check_login(username string, password string) (*model.User, error) {
 	uerInitOnce.Do(initUserService)
@@ -85,7 +94,7 @@ func Authentication(token string, uidPost string) (bool, error) {
 
 func CreateToken(uid int64) (string, error) {
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"uid": uid,
+		"uid": strconv.FormatInt(uid, 10),
 		"exp": time.Now().Add(time.Minute * 15).Unix(),
 	})
 	token, err := at.SignedString([]byte("bcdedit"))

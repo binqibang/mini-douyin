@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/binqibang/mini-douyin/business"
+	"github.com/binqibang/mini-douyin/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -54,8 +55,36 @@ func CommentAction(c *gin.Context) {
 
 // CommentList all videos have same demo comment list
 func CommentList(c *gin.Context) {
+
+	videoId := c.Query("video_id")
+	comments, err := business.GetCommentsByVideoId(videoId)
+
+	if err != nil {
+		c.JSON(http.StatusOK, CommentListResponse{
+			Response:    Response{StatusCode: 0, StatusMsg: "Wrong video id"},
+			CommentList: nil,
+		})
+		return
+	}
+
+	commentsConv := ConvComment(comments)
+
 	c.JSON(http.StatusOK, CommentListResponse{
 		Response:    Response{StatusCode: 0},
-		CommentList: DemoComments,
+		CommentList: commentsConv,
 	})
+}
+
+// ConvComment 转换结构为标准结构体
+func ConvComment(videoComments []model.VideoComment) []Comment {
+	var comments []Comment
+	for _, comment := range videoComments {
+		user := business.GetUserById(comment.UserID)
+		comments = append(comments, Comment{comment.ID,
+			User{comment.UserID, user.Username, 0, 0, true},
+			comment.Comment,
+			comment.CreatedAt.String()})
+	}
+
+	return comments
 }

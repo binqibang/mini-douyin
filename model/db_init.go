@@ -4,12 +4,10 @@ import (
 	"github.com/binqibang/mini-douyin/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"log"
 	"sync"
 )
 
-// 全局变量
 var (
 	db       *gorm.DB
 	initOnce sync.Once
@@ -28,9 +26,7 @@ func InitDB(configPath string) *gorm.DB {
 	mysqlConf := conf.Database.Mysql
 	dsn := mysqlConf.UserName + ":" + mysqlConf.Password
 	dsn += "@(" + mysqlConf.Address + ")/" + mysqlConf.Database + "?charset=utf8&parseTime=True"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("can not connect database, %s", err)
 	}
