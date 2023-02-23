@@ -89,8 +89,8 @@ func Authentication(token string, uidPost string) (bool, error) {
 
 func CreateToken(uid int64) (string, error) {
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"uid": strconv.FormatInt(uid, 10),
-		"exp": time.Now().Add(time.Hour).Unix(),
+		"uid": uid,
+		"exp": time.Now().Add(time.Minute * 15).Unix(),
 	})
 	token, err := at.SignedString([]byte("bcdedit"))
 	if err != nil {
@@ -103,7 +103,6 @@ func ParseToken(token string, secret string) (string, error) {
 	claim, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
-
 	if err != nil {
 		return "", err
 	}
