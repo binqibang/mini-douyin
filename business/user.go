@@ -4,11 +4,12 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
-	"github.com/binqibang/mini-douyin/model"
-	"github.com/dgrijalva/jwt-go/v4"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/binqibang/mini-douyin/model"
+	"github.com/dgrijalva/jwt-go/v4"
 )
 
 var uerInitOnce sync.Once

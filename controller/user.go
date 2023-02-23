@@ -1,11 +1,14 @@
 package controller
 
 import (
+
 	"github.com/binqibang/mini-douyin/business"
 	"github.com/binqibang/mini-douyin/model"
 	"github.com/gin-gonic/gin"
+
 	"net/http"
 	"strconv"
+
 )
 
 // usersLoginInfo use map to store user info, and key is username+password for demo
@@ -35,8 +38,8 @@ type UserResponse struct {
 }
 
 func Register(c *gin.Context) {
-	username := c.Query("username")
-	password := business.Encrypt(c.Query("password"))
+	username := c.PostForm("username")
+	password := business.Encrypt(c.PostForm("password"))
 
 	user := model.User{Username: username, Password: password}
 	err := business.CreateUser(&user)
@@ -53,8 +56,8 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 
 	user, err := business.Check_login(username, password)
 

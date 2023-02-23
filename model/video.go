@@ -63,3 +63,11 @@ func (*VideoDao) QueryVideoList() ([]Video, error) {
 	}
 	return videos, nil
 }
+
+func (*VideoDao) QueryVideosByUserId(user_id string) ([]Video, error) {
+	videos := []Video{}
+	if err := db.Where("user_id = ?", user_id).Find(&videos).Error; err != nil {
+		return nil, err
+	}
+	return videos, nil
+}

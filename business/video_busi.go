@@ -1,8 +1,9 @@
 package business
 
 import (
-	"github.com/binqibang/mini-douyin/model"
 	"sort"
+
+	"github.com/binqibang/mini-douyin/model"
 )
 
 var videoDao model.VideoDao
@@ -34,4 +35,13 @@ func GetTenVideos() ([10]model.Video, error) {
 		vl[i].PublishTime = v[i].PublishTime
 	}
 	return vl, err
+}
+
+func QueryVideosByUserId(user_id string) ([]model.Video, error) {
+	var videos []model.Video
+	var err error
+	if videos, err = videoDao.QueryVideosByUserId(user_id); err != nil {
+		return nil, err
+	}
+	return videos, nil
 }
