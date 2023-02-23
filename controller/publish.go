@@ -2,13 +2,15 @@ package controller
 
 import (
 	"fmt"
+	"github.com/binqibang/mini-douyin/business"
+	"github.com/binqibang/mini-douyin/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/binqibang/mini-douyin/business"
 	"os"
 	"path/filepath"
 	"time"
 )
+
 type VideoListResponse struct {
 	Response
 	VideoList []Video `json:"video_list"`
@@ -84,6 +86,7 @@ func Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
+	conf, err := config.LoadConfig("C:/Users/13099/GolandProjects/mini-douyin/config/settings_dev.yml")
 	token := c.Query("token")
 	user_id := c.Query("user_id")
 	ok, err := business.Authentication(token, user_id)
@@ -100,13 +103,13 @@ func PublishList(c *gin.Context) {
 	vl := []Video{}
 	for i := 0; i < len(videos); i++ {
 		vl = append(vl, Video{})
-		vl[i].Id = videos[i].Id
+		vl[i].Id = videos[i].UserId
 		vl[i].Author = User{Id: user.UserID, Name: user.Username, FollowCount: user.FollowCount, FollowerCount: user.FollowerCount, IsFollow: user.IsFollow}
-		vl[i].CoverUrl = "http://10.128.61.15:8080/douyin/feed_vedio/?path=" + videos[i].CoverUrl
-		vl[i].PlayUrl = "http://10.128.61.15:8080/douyin/feed_vedio/?path=" + videos[i].PlayUrl
+		vl[i].CoverUrl = conf.App.Address + "/douyin/feed_vedio/?path=" + videos[i].CoverUrl
+		vl[i].PlayUrl = conf.App.Address + "/douyin/feed_vedio/?path=" + videos[i].PlayUrl
 		vl[i].FavoriteCount = videos[i].FavoriteCount
 		vl[i].CommentCount = videos[i].CommentCount
-		vl[i].IsFavorite = videos[i].IsFavorite == 1
+		vl[i].IsFavorite = videos[i].IsFavorite
 	}
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
@@ -114,4 +117,17 @@ func PublishList(c *gin.Context) {
 		},
 		VideoList: vl,
 	})
+}
+func IsExistPath(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsExist(err) {
+			return true
+		}
+		if os.IsNotExist(err) {
+			return false
+		}
+		return false
+	}
+	return true
 }
