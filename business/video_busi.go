@@ -28,7 +28,9 @@ func GetTenVideos() ([10]model.Video, error) {
 	for i := 0; i < len(v); i++ {
 
 		vl[i].VideoId = v[i].VideoId
-		vl[i].Author = v[i].Author
+		userdao := model.UserDao{}
+		user, _ := userdao.QueryByUserById(v[i].UserId)
+		vl[i].Author = user.Username
 		vl[i].Title = v[i].Title
 		vl[i].CoverUrl = ip + "/douyin/feed_photo/?path=" + v[i].CoverUrl
 		vl[i].PlayUrl = ip + "/douyin/feed_video/?path=" + v[i].PlayUrl

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"gorm.io/gorm"
 	"log"
 	"time"
@@ -11,6 +10,7 @@ import (
 type Video struct {
 	//原本代码
 	VideoId       int64     `gorm:"column:video_id;type:int;primaryKey;autoIncrement:true" json:"id,omitempty"`
+	UserId        int64     `gorm:"column:user_id;type:int;primaryKey;autoIncrement:true" json:"user_id,omitempty"`
 	Author        string    `gorm:"column:author;type:varchar(255);" json:"author"`
 	Title         string    `gorm:"column:title;type:varchar(255);" json:"title"`
 	PlayUrl       string    `gorm:"column:play_url;type:varchar(255);" json:"play_url"`
@@ -18,7 +18,7 @@ type Video struct {
 	FavoriteCount int64     `gorm:"column:favorite_count;type:int;" json:"favorite_count"`
 	CommentCount  int64     `gorm:"column:comment_count;type:int;" json:"comment_count"`
 	IsFavorite    bool      `gorm:"column:is_favorite;type:int;" json:"is_favorite"`
-	PublishTime   time.Time `gorm:"column:publish_time;type:datetime(3);" json:"publish_time,omitempty"`
+	PublishTime   time.Time `gorm:"column:created_at;type:datetime(3);" json:"created_at,omitempty"`
 }
 
 // TableName Video's table name
@@ -40,7 +40,6 @@ func (*VideoDao) QueryVideoList() ([]Video, error) {
 
 	videos := []Video{}
 	err := db.Find(&videos).Error
-	fmt.Println(videos)
 	if err != nil {
 		return nil, err
 	}

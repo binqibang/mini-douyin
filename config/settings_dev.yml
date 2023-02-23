@@ -1,6 +1,6 @@
 # configurations of app, like address, ...
 app:
-  address: http://10.28.171.163:8080
+  address: http://10.128.185.115:8080
 # configurations of database, like mysql, redis, ...
 database:
   mysql:
